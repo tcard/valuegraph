@@ -50,4 +50,6 @@ func main() {
 
 Yields a certainly big, but navigable, representation. Here's part of it:
 
-![captura de pantalla 2015-06-22 a las 14 09 49](https://cloud.githubusercontent.com/assets/727422/8281457/6d630272-18e8-11e5-88ca-8f88c9b12a30.png)
+![captura de pantalla 2015-06-22 a las 16 01 05](https://cloud.githubusercontent.com/assets/727422/8283526/13b65606-18f8-11e5-96b5-b9e6abaac309.png)
+
+Note the path to each element as tooltip (the text that appears when hovering over a node).

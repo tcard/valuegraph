@@ -39,7 +39,7 @@ func (c *Config) MakeReflected(v reflect.Value) *Graph {
 	g := &Graph{Graph: gographviz.NewGraph(), Nodes: make(map[reflect.Value]string), cfg: c}
 	g.SetName("G")
 	g.SetDir(true)
-	g.addValue("G", "", v, 0, nil)
+	g.addValue("G", "", v, 0, nil, "v")
 	return g
 }
 
@@ -77,7 +77,7 @@ func (g *Graph) nextNode() string {
 	return s
 }
 
-func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth int, edgeParams map[string]string) {
+func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth int, edgeParams map[string]string, path string) {
 	node := g.nextNode()
 	g.Nodes[v] = node
 
@@ -93,9 +93,7 @@ func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth i
 		return
 	}
 
-	nodeParams := map[string]string{
-		"shape": "box",
-	}
+	nodeParams := map[string]string{"shape": "box", "tooltip": `"` + path + `"`}
 
 	label := ""
 	if varName != "" {
@@ -135,7 +133,7 @@ func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth i
 				g.addValue(node, "", v.Elem(), depth+1, map[string]string{
 					"style":     "dashed",
 					"arrowhead": "empty",
-				})
+				}, path+fmt.Sprintf(".(%v)", v.Elem().Type()))
 			}
 		case reflect.String:
 			label += fmt.Sprintf(" len: %v", v.Len())
@@ -157,7 +155,8 @@ func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth i
 				if i == g.cfg.RangeLimit {
 					g.addEllipsis(node, l-i)
 				}
-				g.addValue(node, "["+strconv.Itoa(i)+"]", v.Index(i), depth+1, nil)
+				idx := "[" + strconv.Itoa(i) + "]"
+				g.addValue(node, idx, v.Index(i), depth+1, nil, path+idx)
 			}
 		case reflect.Map:
 			label += `\nmap`
@@ -176,8 +175,18 @@ func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth i
 					g.AddNode(node, kn, map[string]string{"label": `""`})
 					g.AddEdge(node, kn, true, nil)
 
-					g.addValue(kn, "key", k, depth+1, nil)
-					g.addValue(kn, "value", v.MapIndex(k), depth+1, nil)
+					g.addValue(kn, "key", k, depth+1, nil, "<key>")
+
+					kpath := ""
+					switch v.Kind() {
+					case reflect.Array, reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice, reflect.Struct, reflect.UnsafePointer:
+						kpath = "k"
+					case reflect.String:
+						kpath = `"` + v.String() + `"`
+					default:
+						kpath = fmt.Sprint(v.Interface())
+					}
+					g.addValue(kn, "value", v.MapIndex(k), depth+1, nil, path+"["+kpath+"]")
 				}
 			}
 		case reflect.Ptr:
@@ -189,7 +198,7 @@ func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth i
 				if n, ok := g.Nodes[ind]; ok {
 					g.AddEdge(node, n, true, params)
 				} else {
-					g.addValue(node, "", ind, depth, params)
+					g.addValue(node, "", ind, depth, params, path)
 				}
 			}
 		case reflect.Slice:
@@ -204,14 +213,15 @@ func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth i
 						g.addEllipsis(node, l-i)
 						break
 					}
-					g.addValue(node, "["+strconv.Itoa(i)+"]", v.Index(i), depth+1, nil)
+					idx := "[" + strconv.Itoa(i) + "]"
+					g.addValue(node, idx, v.Index(i), depth+1, nil, path+idx)
 				}
 			}
 		case reflect.Struct:
 			label += `\nstruct`
 			nf := ty.NumField()
 			for i := 0; i < nf; i++ {
-				g.addValue(node, ty.Field(i).Name, v.Field(i), depth+1, nil)
+				g.addValue(node, ty.Field(i).Name, v.Field(i), depth+1, nil, path+"."+ty.Field(i).Name)
 			}
 		}
 	} else {
