@@ -8,7 +8,7 @@ See [the docs](http://godoc.org/github.com/tcard/valuegraph) or [some examples](
 
 Add `"github.com/tcard/valuegraph"` to your import list and then `go get`.
 
-The [OpenSVG function](http://godoc.org/github.com/tcard/valuegraph#Make) function, and some methods on [Graph](http://godoc.org/github.com/tcard/valuegraph#Make), depend on [Graphviz](http://www.graphviz.org/)'s `dot` command to be installed in your system.
+The [OpenSVG function](http://godoc.org/github.com/tcard/valuegraph#OpenSVG) function, and some methods on [Graph](http://godoc.org/github.com/tcard/valuegraph#Graph), depend on [Graphviz](http://www.graphviz.org/)'s `dot` command to be installed in your system.
 
 ## Examples
 
