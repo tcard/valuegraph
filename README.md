@@ -20,7 +20,7 @@ valuegraph.OpenSVG(&Point{1, 2})
 
 Opens this in a browser:
 
-![captura de pantalla 2015-06-19 a las 19 41 34](https://cloud.githubusercontent.com/assets/727422/8259224/3d2fd884-16bb-11e5-9725-c50aed4251ef.png)
+![captura de pantalla 2015-06-22 a las 14 07 21](https://cloud.githubusercontent.com/assets/727422/8281412/0ba2bfc8-18e8-11e5-9002-9ee0c381dde8.png)
 
 You also have [the valuegraph.Make function](http://godoc.org/github.com/tcard/valuegraph#Make), which returns a struct you can call less side-effectful methods on.
 
@@ -32,7 +32,7 @@ v.Next.Next.Next = v
 valuegraph.OpenSVG(v)
 ```
 
-![captura de pantalla 2015-06-19 a las 19 30 56](https://cloud.githubusercontent.com/assets/727422/8259057/0942ef44-16ba-11e5-8397-88555226c2d3.png)
+![captura de pantalla 2015-06-22 a las 14 05 41](https://cloud.githubusercontent.com/assets/727422/8281389/d7cd40c4-18e7-11e5-90fb-ff8f1dbfb750.png)
 
 Try it with complex data structures. For example, the `go/ast` representation of this code:
 
@@ -50,4 +50,4 @@ func main() {
 
 Yields a certainly big, but navigable, representation. Here's part of it:
 
-![captura de pantalla 2015-06-19 a las 19 27 39](https://cloud.githubusercontent.com/assets/727422/8259117/7db54782-16ba-11e5-9609-9d73d49dec74.png)
+![captura de pantalla 2015-06-22 a las 14 09 49](https://cloud.githubusercontent.com/assets/727422/8281457/6d630272-18e8-11e5-88ca-8f88c9b12a30.png)
