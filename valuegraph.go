@@ -23,6 +23,8 @@ type Config struct {
 	RangeLimit int
 	// Generate up to this many child nodes per map, to reduce noise. -1 means no limit.
 	MapLimit int
+	// Truncate strings to this length. -1 means no limit.
+	StringLimit int
 	// Stop walking inside compound data structures after reaching this many levels. -1 means no limit.
 	DepthLimit int
 }
@@ -42,9 +44,10 @@ func (c *Config) MakeReflected(v reflect.Value) *Graph {
 }
 
 var DefaultConfig = &Config{
-	RangeLimit: 5,
-	MapLimit:   -1,
-	DepthLimit: -1,
+	RangeLimit:  5,
+	MapLimit:    -1,
+	StringLimit: 30,
+	DepthLimit:  -1,
 }
 
 // Make constructs a Graph representation of any Go value, for inspection.
@@ -137,13 +140,13 @@ func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth i
 		case reflect.String:
 			label += fmt.Sprintf(" len: %v", v.Len())
 			s := v.String()
-			if len(s) > 10 {
-				s = s[:10]
+			if len(s) > g.cfg.StringLimit {
+				s = s[:g.cfg.StringLimit]
 			}
 			s = strings.Replace(s, `\`, `\\`, -1)
 			s = strings.Replace(s, `"`, `\"`, -1)
 			label += "\n" + s
-			if v.Len() > 10 {
+			if v.Len() > g.cfg.StringLimit {
 				label += fmt.Sprintf("\n... %v more", v.Len()-10)
 			}
 		case reflect.Array:
