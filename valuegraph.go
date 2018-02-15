@@ -123,7 +123,7 @@ func (g *Graph) addValue(parent string, varName string, v reflect.Value, depth i
 			reflect.UnsafePointer,
 			reflect.Chan,
 			reflect.Func:
-			label += `: ` + fmt.Sprint(v)
+			label += `: ` + fmt.Sprint(v.Interface())
 		case reflect.Interface:
 			label += `\ninterface`
 			nodeParams["style"] = "dashed"
